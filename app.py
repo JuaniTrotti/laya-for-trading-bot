@@ -1,9 +1,10 @@
 """FastAPI entry point."""
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import buy_router, exit_router, health_router, signal_router
+from api.routes import exit_router, health_router, signal_router
 
 
 @asynccontextmanager
@@ -27,8 +28,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",      # Frontend local
-        "http://localhost:3001",      # Frontend local alternativo
+        "http://localhost:3000",
+        "http://localhost:3001",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:3001",
     ],
@@ -38,7 +39,6 @@ app.add_middleware(
 )
 
 # Registrar routers
-app.include_router(buy_router)
-app.include_router(exit_router)
 app.include_router(signal_router)
+app.include_router(exit_router)
 app.include_router(health_router)

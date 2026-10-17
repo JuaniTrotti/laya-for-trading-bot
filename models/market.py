@@ -1,10 +1,10 @@
-"""Modelos de datos de mercado y posición."""
-from typing import Optional, Dict, Any
+"""Modelos de datos de mercado."""
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
 # ==============================================================================
-# TRADINGVIEW SIGNAL DATA
+# TRADINGVIEW
 # ==============================================================================
 
 class TradingViewScores(BaseModel):
@@ -29,8 +29,6 @@ class TradingViewSignalData(BaseModel):
     event: str = Field(..., example="BUY_SIGNAL")
     ticker: str = Field(..., example="SOLUSDT")
     price: float = Field(..., example=104.28)
-    stop_loss: Optional[float] = Field(None, example=104.07)
-    take_profit: Optional[float] = Field(None, example=104.70)
     score_total: int = Field(..., example=60)
     scores: TradingViewScores
     metrics: TradingViewMetrics
@@ -39,12 +37,6 @@ class TradingViewSignalData(BaseModel):
 # ==============================================================================
 # BINANCE CONTEXT
 # ==============================================================================
-
-class SymbolPriceData(BaseModel):
-    """Precio actual del símbolo."""
-    symbol: str = Field(..., example="SOLUSDT")
-    current_price: float = Field(..., example=104.36)
-
 
 class OrderFlowData(BaseModel):
     """Order flow data de Binance."""
@@ -77,44 +69,8 @@ class BTCContextData(BaseModel):
 
 
 class BinanceContext(BaseModel):
-    """
-    Contexto completo de Binance.
-    Se usa tanto para señales de compra como para monitoreo de venta.
-    """
-    # Opcional: viene en CHECK_SELL
-    symbol_price: Optional[SymbolPriceData] = None
-    # Siempre presentes
+    """Contexto completo de Binance."""
     order_flow: OrderFlowData
     derivatives: DerivativesData
     order_book: OrderBookData
     btc_context: BTCContextData
-
-
-# ==============================================================================
-# POSITION STATE (para decisiones de exit)
-# ==============================================================================
-
-class PositionState(BaseModel):
-    """Estado de una posición abierta."""
-    entry_price: float = Field(..., example=64200.00)
-    current_price: float = Field(..., example=65400.50)
-    pnl_percent: float = Field(..., example=1.87)
-    holding_time: Optional[str] = Field(None, example="4h 30m")
-    stop_loss_price: Optional[float] = Field(None, example=62000.00)
-
-
-# ==============================================================================
-# GENERIC MARKET STATE (mantener para compatibilidad)
-# ==============================================================================
-
-class BinanceMarketState(BaseModel):
-    """Estado de mercado genérico con datos de Binance."""
-    symbol: str = Field(..., example="BTCUSDT")
-    price: float = Field(..., example=65400.50)
-    change_24h_percent: float = Field(..., example=-3.45)
-    volume_24h_usdt: float = Field(..., example=450000000.0)
-    rsi_14: Optional[float] = Field(None, example=28.5)
-    trend_description: Optional[str] = Field(
-        None,
-        example="Soporte clave alcanzado con divergencia alcista en RSI"
-    )
